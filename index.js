@@ -41,6 +41,26 @@ app.post("/review",async(req,res)=>{
 
 })
 
+app.get("/reviews", async(req,res)=>{
+
+  let query={}
+
+  if(req.query.email)
+
+  query={
+
+    email: req.query.email
+  }
+
+  const cursor = Reviews.find(query)
+  const result = await cursor.toArray()
+  res.send(result)
+
+
+
+
+})
+
 app.get("/review", async(req,res)=>{
  let query ={}
 
