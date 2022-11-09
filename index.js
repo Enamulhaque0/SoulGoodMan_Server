@@ -41,6 +41,18 @@ app.post("/review",async(req,res)=>{
 
 })
 
+app.delete("/reviews/:id", async(req,res)=>{
+
+  const {id}= req.params
+  const query= {_id: ObjectId(id)}
+
+  const result = await Reviews.deleteOne(query)
+  res.send(result)
+
+
+
+})
+
 app.get("/reviews", async(req,res)=>{
 
   let query={}
