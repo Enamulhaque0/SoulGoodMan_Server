@@ -22,12 +22,47 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const Services = client.db("SoulGodMan").collection("services");
+    const Reviews =client.db("SoulGodMan").collection("reviews")
 
     app.post("/services", async (req, res) => {
       const service = req.body;
       const result = await Services.insertOne(service);
       res.send(result);
     });
+
+app.post("/review",async(req,res)=>{
+  
+  const review =req.body
+  const result = await Reviews.insertOne(review)
+  res.send(result)
+
+
+
+
+})
+
+app.get("/review", async(req,res)=>{
+ let query ={}
+
+if(req.query.name){
+  
+ 
+  query={
+    name: req.query.name
+
+
+  }
+
+}
+ const cursor = Reviews.find(query)
+ const review = await cursor.toArray()
+ res.send(review)
+
+
+
+})
+
+
 
     app.get("/services", async (req, res) => {
       const query = {};
@@ -43,7 +78,7 @@ async function run() {
 
     app.get("/serviceDetails/:id", async (req, res) => {
       const { id } = req.params;
-      console.log(id)
+      
       const query = { _id: ObjectId(id) };
       const service = await Services.findOne(query);
       res.send(service);
