@@ -22,7 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const Services = client.db("SoulGodMan").collection("services");
-    const Reviews =client.db("SoulGodMan").collection("reviews")
+    const Reviews = client.db("SoulGodMan").collection("reviews");
 
     app.post("/services", async (req, res) => {
       const service = req.body;
@@ -30,71 +30,60 @@ async function run() {
       res.send(result);
     });
 
-app.post("/review",async(req,res)=>{
-  
-  const review =req.body
-  const result = await Reviews.insertOne(review)
-  res.send(result)
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await Reviews.insertOne(review);
+      res.send(result);
+    });
 
+    app.delete("/reviews/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: ObjectId(id) };
 
+      const result = await Reviews.deleteOne(query);
+      res.send(result);
+    });
 
+    app.patch("/reviews/:id", async (req, res) => {
+      const { id } = req.params;
+      const { reviewText } = req.body;
 
-})
+      const query = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          reviewText: reviewText,
+        },
+      };
 
-app.delete("/reviews/:id", async(req,res)=>{
+      const result = await Reviews.updateOne(query, updateDoc);
+      res.send(result);
+    });
 
-  const {id}= req.params
-  const query= {_id: ObjectId(id)}
+    app.get("/reviews", async (req, res) => {
+      let query = {};
 
-  const result = await Reviews.deleteOne(query)
-  res.send(result)
+      if (req.query.email)
+        query = {
+          email: req.query.email,
+        };
 
+      const cursor = Reviews.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
+    app.get("/review", async (req, res) => {
+      let query = {};
 
-})
-
-app.get("/reviews", async(req,res)=>{
-
-  let query={}
-
-  if(req.query.email)
-
-  query={
-
-    email: req.query.email
-  }
-
-  const cursor = Reviews.find(query)
-  const result = await cursor.toArray()
-  res.send(result)
-
-
-
-
-})
-
-app.get("/review", async(req,res)=>{
- let query ={}
-
-if(req.query.name){
-  
- 
-  query={
-    name: req.query.name
-
-
-  }
-
-}
- const cursor = Reviews.find(query)
- const review = await cursor.toArray()
- res.send(review)
-
-
-
-})
-
-
+      if (req.query.name) {
+        query = {
+          name: req.query.name,
+        };
+      }
+      const cursor = Reviews.find(query);
+      const review = await cursor.toArray();
+      res.send(review);
+    });
 
     app.get("/services", async (req, res) => {
       const query = {};
@@ -106,18 +95,13 @@ if(req.query.name){
       res.send(services);
     });
 
-
-
     app.get("/serviceDetails/:id", async (req, res) => {
       const { id } = req.params;
-      
+
       const query = { _id: ObjectId(id) };
       const service = await Services.findOne(query);
       res.send(service);
     });
-
-
-
 
     app.get("/", async (req, res) => {
       const query = {};
