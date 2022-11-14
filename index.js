@@ -48,7 +48,7 @@ async function run() {
       const user = req.body
   
      
-      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, {expiresIn :"1d"} )
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, {expiresIn :"7d"} )
       res.send({token})
   })
 
@@ -68,7 +68,8 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/reviews/:id", async (req, res) => {
+    app.delete("/reviews/:id",  async (req, res) => {
+      
       const { id } = req.params;
       const query = { _id: ObjectId(id) };
 
@@ -77,6 +78,7 @@ async function run() {
     });
 
     app.patch("/reviews/:id", async (req, res) => {
+     
       const { id } = req.params;
       const { reviewText } = req.body;
 
@@ -91,7 +93,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/reviews",verifyJWT, async (req, res) => {
+    app.get("/reviews",verifyJWT,  async (req, res) => {
       const decoded = req.decoded;
             
       if(decoded.email !== req.query.email){
